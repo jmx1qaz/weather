@@ -1,0 +1,6 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+weather,com.pactera.weather.model,WeatherModel,217,38,46,0,0,6,27,11,4,11
+weather,com.pactera.weather.model,Tip,136,19,24,0,0,4,18,5,6,5
+weather,com.pactera.weather.controller,DemoController,2,17,0,0,1,5,1,2,1,2
+weather,com.pactera.weather.service.impl,DemoServiceImpl,11,99,0,2,4,23,0,4,0,3
+weather,com.pactera.weather,WeatherApplication,5,3,0,0,2,1,1,1,1,1

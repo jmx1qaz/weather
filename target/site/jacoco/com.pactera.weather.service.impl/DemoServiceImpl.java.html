@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DemoServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">weather</a> &gt; <a href="index.source.html" class="el_package">com.pactera.weather.service.impl</a> &gt; <span class="el_source">DemoServiceImpl.java</span></div><h1>DemoServiceImpl.java</h1><pre class="source lang-java linenums">package com.pactera.weather.service.impl;
+
+
+import com.alibaba.fastjson.JSONObject;
+import com.pactera.weather.model.WeatherModel;
+import com.pactera.weather.service.DemoService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+/**
+ *
+ * DemoServiceImpl
+ * @author 姜满祥
+ * @since 2021-08-05
+ */
+<span class="fc" id="L23">@Slf4j</span>
+@Service
+<span class="fc" id="L25">public class DemoServiceImpl implements DemoService {</span>
+
+    @Value(&quot;${data.url}&quot;)
+    private String url;
+
+    @Override
+    public WeatherModel queryWeatherInformation(String cityId) {
+<span class="fc" id="L32">        WeatherModel weatherModel = new WeatherModel();</span>
+        try{
+            // 由网址创建URL对象
+<span class="fc" id="L35">            URL url = new URL(this.url+cityId+&quot;.html&quot;);</span>
+            // 防止乱码
+<span class="fc" id="L37">            InputStreamReader isReader =  new InputStreamReader(url.openStream(),&quot;UTF-8&quot;);</span>
+            // 采用缓冲式读入
+<span class="fc" id="L39">            BufferedReader br = new BufferedReader(isReader);</span>
+            String str;
+<span class="fc bfc" id="L41" title="All 2 branches covered.">            while((str = br.readLine()) != null){</span>
+<span class="fc" id="L42">                System.out.println(str);</span>
+<span class="fc" id="L43">                JSONObject json = JSONObject.parseObject(str);</span>
+<span class="fc" id="L44">                String weatherInfoStr = json.getString(&quot;weatherinfo&quot;);</span>
+                // 国家气象局接口的json对象 set 到 weatherModel 中。
+<span class="fc" id="L46">                JSONObject weatherInfo = JSONObject.parseObject(weatherInfoStr);</span>
+                // 城市
+<span class="fc" id="L48">                weatherModel.setCity(weatherInfo.getString(&quot;city&quot;));</span>
+                // 最低气温
+<span class="fc" id="L50">                weatherModel.setMinimumTemperature(weatherInfo.getString(&quot;temp1&quot;));</span>
+                // 最高气温
+<span class="fc" id="L52">                weatherModel.setMaximumTemperature(weatherInfo.getString(&quot;temp2&quot;));</span>
+                // 天气
+<span class="fc" id="L54">                weatherModel.setWeather(weatherInfo.getString(&quot;weather&quot;));</span>
+                // 时间
+<span class="fc" id="L56">                SimpleDateFormat formatter= new SimpleDateFormat(&quot;yyyy-MM-dd HH:mm:ss&quot;);</span>
+<span class="fc" id="L57">                Date date = new Date(System.currentTimeMillis());</span>
+<span class="fc" id="L58">                weatherModel.setUpdateTime(formatter.format(date));</span>
+<span class="fc" id="L59">            }</span>
+<span class="fc" id="L60">            br.close();//网上资源使用结束后，数据流及时关闭</span>
+<span class="fc" id="L61">            isReader.close();</span>
+        }
+<span class="nc" id="L63">        catch(Exception exp){</span>
+<span class="nc" id="L64">            exp.printStackTrace();</span>
+<span class="nc" id="L65">            log.error(exp.toString());</span>
+<span class="nc" id="L66">            log.error(exp.getMessage());</span>
+<span class="fc" id="L67">        }</span>
+<span class="fc" id="L68">        return  weatherModel;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,9 @@
+server:
+  port: 80
+
+data:
+  url: http://www.weather.com.cn/data/cityinfo/
+
+spring:
+  profiles:
+    active: dev

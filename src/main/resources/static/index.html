@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<select onchange="queryCurrentWeather(this.value)">
+    <option value ="">请选择城市</option>
+    <option value ="101070201">大连</option>
+    <option value ="101070101">沈阳</option>
+    <option value="101010100">北京</option>
+</select>
+<table border="1" >
+    <tr>
+        <th width="100">城市名称</th>
+        <td id="city" width="200"></td>
+    </tr>
+    <tr>
+        <th>天气</th>
+        <td id="weather"></td>
+    </tr>
+    <tr>
+        <th>最低气温</th>
+        <td id="minimumTemperature" ></td>
+    </tr>
+    <tr>
+        <th>最高气温</th>
+        <td id="maximumTemperature"></td>
+    </tr>
+    <tr>
+        <th>更新时间</th>
+        <td id="updateTime"></td>
+    </tr>
+</table>
+</body>
+<script type="text/javascript">
+    function ajax(){
+      var ajaxData = {
+        type:arguments[0].type || "GET",
+        url:arguments[0].url || "",
+        async:arguments[0].async || "true",
+        data:arguments[0].data || null,
+        dataType:arguments[0].dataType || "text",
+        contentType:arguments[0].contentType || "application/x-www-form-urlencoded",
+        beforeSend:arguments[0].beforeSend || function(){},
+        success:arguments[0].success || function(){},
+        error:arguments[0].error || function(){}
+      }
+      ajaxData.beforeSend()
+      var xhr = createxmlHttpRequest();
+      xhr.responseType=ajaxData.dataType;
+      xhr.open(ajaxData.type,ajaxData.url,ajaxData.async);
+      xhr.setRequestHeader("Content-Type",ajaxData.contentType);
+      xhr.send(convertData(ajaxData.data));
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+          if(xhr.status == 200){
+            ajaxData.success(xhr.response)
+          }else{
+            ajaxData.error()
+          }
+        }
+      }
+    }
+
+    function createxmlHttpRequest() {
+      if (window.ActiveXObject) {
+        return new ActiveXObject("Microsoft.XMLHTTP");
+      } else if (window.XMLHttpRequest) {
+        return new XMLHttpRequest();
+      }
+    }
+
+    function convertData(data){
+      if( typeof data === 'object' ){
+        var convertResult = "" ;
+        for(var c in data){
+          convertResult+= c + "=" + data[c] + "&";
+        }
+        convertResult=convertResult.substring(0,convertResult.length-1)
+        return convertResult;
+      }else{
+        return data;
+      }
+    }
+
+    function queryCurrentWeather(val){
+        if(val === ""){
+            return false;
+        }
+        ajax({
+          type:"GET",
+          url:"http://127.0.0.1/queryCurrentWeather/"+val,
+          dataType:"json",
+          success:function(res){
+            if(res.code === 200){
+                document.getElementById("city").innerHTML = res.detail["city"];
+                document.getElementById("weather").innerHTML = res.detail["weather"];
+                document.getElementById("updateTime").innerHTML = res.detail["updateTime"];
+                document.getElementById("minimumTemperature").innerHTML = res.detail["minimumTemperature"];
+                document.getElementById("maximumTemperature").innerHTML = res.detail["maximumTemperature"];
+            }
+          },
+          error:function(){
+            console.log("error")
+          }
+        })
+    }
+</script>
+</html>
